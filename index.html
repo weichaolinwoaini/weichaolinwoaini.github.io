@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>给梦涵的信</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -webkit-touch-callout: none;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: url('https://www.keaitupian.cn/cjpic/frombd/2/253/83727279/1962111814.jpg'); /* 设置背景图片 */
+            background-size: cover; /* 使图片铺满整个背景 */
+            background-position: center; /* 图片居中显示 */
+            background-repeat: no-repeat; /* 防止图片重复 */
+            flex-direction: column;
+        }
+        /* 信封容器 */
+        .envelope-container {
+            position: relative;
+            margin-bottom: 30px;
+            width: 450px;
+            height: 300px;
+        }
+        /* 信封样式 - 移除指针事件 */
+        .envelope {
+            width: 100%;
+            height: 100%;
+            background-color: #ffb6c1;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            pointer-events: none;
+        }
+        /* 信封盖 */
+        .envelope::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background-color: #ffc0cb;
+            clip-path: polygon(0 0, 50% 50%, 100% 0);
+            z-index: 1;
+            transform-origin: top;
+            transition: transform 0.6s ease;
+        }
+        /* 信封打开状态 */
+        .envelope.open::before {
+            transform: rotateX(180deg);
+        }
+        .envelope.hide {
+            opacity: 0;
+        }
+        /* 爱心信夹 - 唯一可点击元素 */
+        .heart-clip {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background-color: #d45997;
+            clip-path: polygon(50% 0%, 100% 35%, 80% 100%, 20% 100%, 0% 35%);
+            z-index: 2;
+            transition: opacity 0.3s ease;
+            cursor: pointer;
+            pointer-events: auto;
+        }
+        .envelope.open .heart-clip {
+            opacity: 0;
+            pointer-events: none;
+        }
+        /* 信纸样式 */
+        .letter-paper {
+            width: 100%;
+            background-color: #fff;
+            padding: 40px;
+            border: 1px solid #f8c8dc;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            line-height: 1.6;
+            font-family: '楷体', serif;
+            text-align: left;
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+            pointer-events: none;
+        }
+        /* 信纸显示状态 */
+        .letter-paper.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto; /* 显示后允许点击 */
+        }
+        /* 我爱你字样 */
+        .love-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 80px;
+            color: #8d5f76;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+            z-index: 100;
+        }
+        .love-message.show {
+            opacity: 1;
+        }
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            .envelope-container {
+                width: 300px;
+                height: 200px;
+            }
+            .heart-clip {
+                width: 40px;
+                height: 40px;
+            }
+            .letter-paper {
+                padding: 20px;
+            }
+            .love-message {
+                font-size: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="envelope-container">
+        <div class="envelope" id="envelope">
+            <div class="heart-clip" id="heart-clip"></div>
+        </div>
+        
+        <div class="letter-paper" id="letter-paper">
+            <div class="letter-content">
+                <p><strong>2026年1月1日 周四</strong></p>
+                <p>亲爱的梦涵：</p>
+                <p>今天是我们恋爱的第28天。我想对你说的话有好多，让我不知道从哪里说起才好。</p>
+                <p>遇见你是我感到很幸运，那些我与你的过往闪在我的脑海里，即便是一闪而过，我也觉得甜甜的</p>
+                <p>今天是新的一年啦，也是新的开始</p>
+                <p>希望往后的日子里，我们能一起看更多的风景，。</p>
+                <p>愿我们岁岁年年，平安喜乐，万事胜意。你的存在就是我最大的祝福。</p>
+                <p>永远惦记你的人</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 我爱你字样 -->
+    <div class="love-message" id="love-message">我爱你</div>
+
+    <script>
+    // 阻止所有文本选择行为
+    document.onselectstart = function() { return false; };
+    
+    // 获取爱心元素
+    const heartClip = document.getElementById('heart-clip');
+    
+    // 添加点击和触摸事件
+    function handleHeartClick() {
+        const envelope = document.getElementById('envelope');
+        
+        // 播放信封打开动画
+        envelope.classList.add('open');
+        
+        // 信封打开后消失
+        setTimeout(() => {
+            envelope.classList.add('hide');
+            
+            // 信纸慢慢出现
+            setTimeout(() => {
+                const letterPaper = document.getElementById('letter-paper');
+                letterPaper.classList.add('show');
+                
+                // 添加信纸点击事件
+                letterPaper.addEventListener('click', function() {
+                    const loveMsg = document.getElementById('love-message');
+                    loveMsg.classList.add('show');
+                    
+                    // 3秒后消失
+                    setTimeout(() => {
+                        loveMsg.classList.remove('show');
+                    }, 3000);
+                });
+            }, 100);
+        }, 600);
+    }
+    
+    // 添加点击事件
+    heartClip.addEventListener('click', handleHeartClick);
+    // 添加触摸事件
+    heartClip.addEventListener('touchend', handleHeartClick);
+</script>
+
+</body>
+</html>
