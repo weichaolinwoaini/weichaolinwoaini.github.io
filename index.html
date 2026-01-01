@@ -1,214 +1,1640 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>给梦涵的信</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            -webkit-touch-callout: none;
-        }
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-image: url('https://www.keaitupian.cn/cjpic/frombd/2/253/83727279/1962111814.jpg'); /* 设置背景图片 */
-            background-size: cover; /* 使图片铺满整个背景 */
-            background-position: center; /* 图片居中显示 */
-            background-repeat: no-repeat; /* 防止图片重复 */
-            flex-direction: column;
-        }
-        /* 信封容器 */
-        .envelope-container {
-            position: relative;
-            margin-bottom: 30px;
-            width: 450px;
-            height: 300px;
-        }
-        /* 信封样式 - 移除指针事件 */
-        .envelope {
-            width: 100%;
-            height: 100%;
-            background-color: #ffb6c1;
-            position: relative;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            pointer-events: none;
-        }
-        /* 信封盖 */
-        .envelope::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 50%;
-            background-color: #ffc0cb;
-            clip-path: polygon(0 0, 50% 50%, 100% 0);
-            z-index: 1;
-            transform-origin: top;
-            transition: transform 0.6s ease;
-        }
-        /* 信封打开状态 */
-        .envelope.open::before {
-            transform: rotateX(180deg);
-        }
-        .envelope.hide {
-            opacity: 0;
-        }
-        /* 爱心信夹 - 唯一可点击元素 */
-        .heart-clip {
-            position: absolute;
-            top: 45%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 60px;
-            background-color: #d45997;
-            clip-path: polygon(50% 0%, 100% 35%, 80% 100%, 20% 100%, 0% 35%);
-            z-index: 2;
-            transition: opacity 0.3s ease;
-            cursor: pointer;
-            pointer-events: auto;
-        }
-        .envelope.open .heart-clip {
-            opacity: 0;
-            pointer-events: none;
-        }
-        /* 信纸样式 */
-        .letter-paper {
-            width: 100%;
-            background-color: #fff;
-            padding: 40px;
-            border: 1px solid #f8c8dc;
-            border-radius: 15px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-            line-height: 1.6;
-            font-family: '楷体', serif;
-            text-align: left;
-            opacity: 0;
-            position: absolute;
-            top: 0;
-            left: 0;
-            transform: translateY(20px);
-            transition: all 0.8s ease;
-            pointer-events: none;
-        }
-        /* 信纸显示状态 */
-        .letter-paper.show {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto; /* 显示后允许点击 */
-        }
-        /* 我爱你字样 */
-        .love-message {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 80px;
-            color: #8d5f76;
-            font-weight: bold;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            pointer-events: none;
-            z-index: 100;
-        }
-        .love-message.show {
-            opacity: 1;
-        }
-        /* 响应式设计 */
-        @media (max-width: 600px) {
-            .envelope-container {
-                width: 300px;
-                height: 200px;
-            }
-            .heart-clip {
-                width: 40px;
-                height: 40px;
-            }
-            .letter-paper {
-                padding: 20px;
-            }
-            .love-message {
-                font-size: 50px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>简易植物大战僵尸 DEMO</title>
+  <style>
+    /* 全局禁用文本选取 - 核心修改 1 */
+    * {
+      user-select: none;
+      -webkit-user-select: none; /* 兼容webkit内核浏览器 */
+      -moz-user-select: none; /* 兼容火狐 */
+      -ms-user-select: none; /* 兼容IE/Edge */
+    }
+
+    body {
+      font-family: "Microsoft YaHei", sans-serif;
+      background: #efa;
+    }
+
+    /* 新增：属性调节面板样式 */
+    #config-panel {
+      width: 1500px;
+      margin: 20px auto;
+      padding: 15px;
+      background: #f0f8e8;
+      border: 3px solid #67a76d;
+      border-radius: 10px;
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .config-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 10px;
+      background: #e8f5e9;
+      border-radius: 8px;
+      border: 2px solid #4caf50;
+    }
+    .config-section h3 {
+      margin: 0;
+      color: #2e7d32;
+      font-size: 18px;
+      text-align: center;
+    }
+    .config-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+    .config-item label {
+      min-width: 80px;
+      color: #2e7d32;
+      font-weight: bold;
+    }
+    .config-item input {
+      width: 80px;
+      padding: 5px;
+      border: 2px solid #81c784;
+      border-radius: 5px;
+      text-align: center;
+      font-weight: bold;
+      user-select: auto;
+      -webkit-user-select: auto;
+      -moz-user-select: auto;
+      -ms-user-select: auto;
+    }
+    .config-item button {
+      background: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .config-item button:hover {
+      background: #66bb6a;
+    }
+
+    /* 新增：商店样式 */
+    #shop-panel {
+      padding: 10px;
+      background: #fdf9e7;
+      border-radius: 8px;
+      border: 2px solid #ff9800;
+    }
+    #shop-btn {
+      background: #ff9800;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 20px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    #shop-btn:hover {
+      background: #fb8c00;
+    }
+    #shop-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 99999;
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+    #shop-content {
+      background: #fff8e1;
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      border: 3px solid #ff9800;
+      width: 600px;
+    }
+    #shop-content h2 {
+      color: #e65100;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    #diamond-count {
+      font-size: 20px;
+      color: #1a237e;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+    .shop-plants {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .shop-plant-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: 2px solid #ffb74d;
+      border-radius: 10px;
+      background: #fff3e0;
+      padding: 15px;
+      width: 100px;
+    }
+    .shop-plant-item .icon {
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+    .shop-plant-item .name {
+      font-weight: bold;
+      color: #e65100;
+      margin-bottom: 5px;
+    }
+    .shop-plant-item .price {
+      color: #1a237e;
+      margin-bottom: 10px;
+    }
+    .shop-plant-item .buy-btn {
+      background: #ff5722;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .shop-plant-item .buy-btn:hover {
+      background: #e64a19;
+    }
+    .shop-plant-item .bought {
+      color: #4caf50;
+      font-weight: bold;
+    }
+    #close-shop-btn {
+      background: #795548;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 20px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    #close-shop-btn:hover {
+      background: #6d4c41;
+    }
+
+    #pause-btn {
+      position: absolute;
+      left: 30px; top: 24px;
+      font-size: 22px;
+      background: #ffd63b;
+      color: #4e3200;
+      border: 2px solid #fbcd18;
+      border-radius: 10px;
+      padding: 8px 24px;
+      z-index: 99;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    #hud {
+      margin: 24px auto 14px auto;
+      width: 1500px; /* 适配游戏区域 */
+      height: 60px;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 30px;
+      position: relative;
+    }
+    .zombie-count {
+      position: absolute;
+      right: 60px; top: 22px;
+      font-size: 26px;
+      color: #2c003e;
+      font-weight: bold;
+    }
+    /* 新增：钻石显示样式 */
+    .diamond-count {
+      position: absolute;
+      right: 280px; top: 22px;
+      font-size: 26px;
+      color: #1a237e;
+      font-weight: bold;
+    }
+    /* 新增：倒计时样式 */
+    .time-count {
+      position: absolute;
+      right: 450px; top: 22px;
+      font-size: 26px;
+      color: #d32f2f;
+      font-weight: bold;
+    }
+    #plant-bar {
+      display: flex;
+      gap: 12px;
+      height: 58px;
+      align-items: center;
+      z-index:99;
+    }
+    .plant-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: 2px solid #c1cb1b;
+      border-radius: 9px;
+      background: #ecf7c7;
+      font-size: 17px;
+      min-width:70px; min-height:56px;
+      cursor: pointer;
+      padding:6px;
+      box-shadow: 0 1px 3px #aaa;
+      font-weight: bold;
+      /* 恢复植物卡片的选取功能 - 核心修改 2 */
+      user-select: auto;
+      -webkit-user-select: auto;
+      -moz-user-select: auto;
+      -ms-user-select: auto;
+      transition: .1s;
+    }
+    .plant-btn.selected {
+      border: 3px solid #edb514;
+      box-shadow:0 0 10px #f1c40f;
+    }
+    .plant-btn > .icon {
+      font-size: 31px;
+    }
+
+    .drag-image {
+      position: fixed;
+      pointer-events:none;
+      opacity:0.88;
+      z-index:9999;
+      width:70px;
+      height:78px;
+    }
+
+    #game-area {
+      width: 1500px; /* 游戏区域宽度 */
+      height: 620px; /* 适配8行密集格子 */
+      margin: 0 auto;
+      background: #034f18;
+      border: 3px solid #3b5e3b;
+      position: relative;
+      box-sizing: border-box;
+    }
+    #lawn {
+      width: 1400px; /* 适配密集格子 */
+      height: 570px; /* 适配8行 */
+      background: #a2db77;
+      border-radius: 14px;
+      border: 2px solid #67a76d;
+      position: absolute;
+      top: 25px; left: 40px;
+      z-index: 2;
+      box-sizing: border-box;
+    }
+    .cell {
+      width: 80px; /* 缩小格子宽度，更密集 */
+      height: 70px; /* 缩小格子高度，更密集 */
+      border: 1px solid #bbc;
+      position: absolute;
+      background: rgba(255,255,255,0.09);
+      box-sizing: border-box;
+    }
+    .cell.hovered {
+      background: #bbf3d8;
+    }
+    .cell.selected {
+      background: #ffe63b;
+    }
+    .plant {
+      width: 60px; /* 适配小格子 */
+      height: 66px; /* 适配小格子 */
+      position: absolute;
+      left: 10px; top: 2px; /* 适配小格子 */
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center; align-items: center;
+      font-size: 22px; /* 缩小字体 */
+      color: #245c24;
+      font-weight: bold;
+      border: 2px solid #38823a;
+      border-radius: 36px 36px 33px 32px;
+    }
+    .plant.peashooter  {background:#6ac46a;}
+    .plant.watermelon  {background:#72c7dc;}
+    .plant.chomper     {background:#d93030;}
+    .plant.icepeashooter  {background:#73ccfa;}
+    .plant.kernelpult  {background:#ffd66b;}
+    /* 新增向日葵样式 */
+    .plant.sunflower   {background:#ffeb3b;}
+    /* 新增5种商店植物样式 */
+    .plant.chili       {background:#ff5722;}
+    .plant.doomsday-mushroom {background:#9c27b0;}
+    .plant.potato-wall {background:#795548;}
+    .plant.spike       {background:#607d8b;}
+    .plant.fire-peashooter {background:#f44336;}
+    
+    /* 修改子弹样式 */
+    .bullet, .bullet-special {
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      position: absolute;
+      z-index: 10;
+      top: 35px; /* 适配小格子 */
+      left: 40px; /* 适配小格子 */
+      box-shadow: 0 2px 7px #888;
+      border: 2px solid #48b;
+      transition: left 0.1s linear, top 0.1s ease-out;
+    }
+    .bullet.peashooter {background:#16c4fc;}
+    .bullet.watermelon {
+      background:#17d708;
+      width: 22px;
+      height: 22px;
+    }
+    .bullet.icepeashooter {background:#60eaff;}
+    .bullet.kernelpult {
+      background:#ffe37a;
+      width: 20px;
+      height: 20px;
+    }
+    /* 新增火焰豌豆子弹样式 */
+    .bullet.fire-peashooter {
+      background:#ff9800;
+      box-shadow: 0 0 10px #ff5722;
+    }
+    .bullet.watermelon.special {
+      background: radial-gradient(circle,#2ced4e 45%,#017e0e 100%);
+      border:2px solid #169714;
+      width:25px;height:25px;box-shadow:0 0 14px #17a;
+    }
+    .bullet.kernelpult.special {
+      background:radial-gradient(circle,#ffd858 55%,#ed7c00 100%);
+      width:28px;height:28px;border:3px solid #fbcd18;
+    }
+    .zombie {
+      width: 65px; /* 缩小僵尸宽度 */
+      height: 83px; /* 缩小僵尸高度 */
+      position: absolute;
+      z-index: 3;
+      background: #888;
+      left: 1450px; /* 适配密集格子的游戏区域 */
+      top: 0px;
+      border-radius: 20px 20px 16px 16px/38px 38px 48px 48px;
+      border: 2px solid #333;
+      box-shadow: 1px 2px 7px #aaa;
+      text-shadow: 1px 1px 2px #000;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      color:#fff;
+      font-size: 25px; /* 缩小字体 */
+      transition: left .12s linear;
+    }
+    /* 新增：BOSS僵尸样式 */
+    .zombie.boss {
+      width: 100px;
+      height: 120px;
+      background: #424242;
+      border: 4px solid #000;
+      font-size: 35px;
+    }
+    .zombie-hp {
+      background: rgba(80,0,0,0.83);
+      color: #ffe;
+      border-radius: 6px;
+      padding: 2px 0 0 0;
+      width: 45px; /* 缩小血条 */
+      margin-bottom: 2px;
+      font-weight: bold;
+      text-align: center;
+      font-size: 16px; /* 缩小字体 */
+      transition: color .15s, background .2s; /* 新增背景过渡 */
+    }
+    /* BOSS僵尸血条 */
+    .zombie.boss .zombie-hp {
+      width: 80px;
+      font-size: 18px;
+      background: rgba(150,0,0,0.9);
+    }
+    .zombie.frozen {filter:brightness(1.6) drop-shadow(0 0 12px #7cf3ff);}
+    /* 新增：僵尸燃烧效果 */
+    .zombie.burning {filter:brightness(1.2) drop-shadow(0 0 10px #ff5722); background: #ff8a65;}
+    .sun {
+      position: absolute;
+      width: 36px; height: 36px;
+      background: #ffc600;
+      border-radius: 50%;
+      border: 2px solid #fee900;
+      left: 10px; top: 8px; /* 适配小格子 */
+      animation: dropSun 1.3s;
+      z-index:20;
+      filter: drop-shadow(0 0 12px #ffd700);
+    }
+    @keyframes dropSun {
+      from {top:-60px;}
+      to {top:8px;}
+    }
+
+    /* 植物飞入动画 */
+    @keyframes plant-fly-in {
+      0%   {transform: scale(1) translateY(0);}
+      70%  {transform: scale(1.1) translateY(-30px);}
+      90%  {transform: scale(1) translateY(0);}
+      100% {transform: scale(1) translateY(0);}
+    }
+    .plant-fly-in {
+      animation: plant-fly-in 0.32s cubic-bezier(.25,.63,.58,1) forwards;
+      z-index: 99;
+    }
+
+    /* 僵尸血量动画（递减闪烁） */
+    .zombie-hp.animating {
+      animation: zombieHpBlink 0.55s;
+    }
+    @keyframes zombieHpBlink {
+      0% { color: #ed2c2c; background:rgba(255,213,186,0.93);}
+      30% { color: #ffe937; background:rgba(255,230,100,0.99);}
+      60% { color: #ffe937; background:rgba(130,82,62,0.99);}
+      100% { color:#ffe; background:rgba(80,0,0,0.83);}
+    }
+
+    /* 游戏结束弹窗样式 */
+    #game-over-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 99999;
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+    #game-over-content {
+      background: #ffd63b;
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      border: 3px solid #fbcd18;
+    }
+    #game-over-content h2 {
+      color: #d63031;
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+    #restart-btn {
+      background: #d63031;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      font-size: 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    #restart-btn:hover {
+      background: #ff7675;
+      transform: scale(1.05);
+    }
+
+    /* 新增：BOSS提示文字样式 */
+    #boss-warning {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 60px;
+      color: #ff0000;
+      font-weight: bold;
+      text-shadow: 0 0 10px #ff0000;
+      z-index: 999999;
+      display: none;
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    /* 新增：过关弹窗样式 */
+    #success-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 99999;
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+    #success-content {
+      background: #4caf50;
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      border: 3px solid #2e7d32;
+    }
+    #success-content h2 {
+      color: #ffffff;
+      font-size: 40px;
+      margin-bottom: 20px;
+    }
+    #success-content p {
+      color: #ffffff;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    #success-restart-btn {
+      background: #2e7d32;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      font-size: 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    #success-restart-btn:hover {
+      background: #66bb6a;
+      transform: scale(1.05);
+    }
+  </style>
 </head>
 <body>
-    <div class="envelope-container">
-        <div class="envelope" id="envelope">
-            <div class="heart-clip" id="heart-clip"></div>
-        </div>
-        
-        <div class="letter-paper" id="letter-paper">
-            <div class="letter-content">
-                <p><strong>2026年1月1日 周四</strong></p>
-                <p>亲爱的梦涵：</p>
-                <p>今天是我们恋爱的第28天。我想对你说的话有好多，让我不知道从哪里说起才好。</p>
-                <p>遇见你是我感到很幸运，那些我与你的过往闪在我的脑海里，即便是一闪而过，我也觉得甜甜的</p>
-                <p>今天是新的一年啦，也是新的开始</p>
-                <p>希望往后的日子里，我们能一起看更多的风景，。</p>
-                <p>愿我们岁岁年年，平安喜乐，万事胜意。你的存在就是我最大的祝福。</p>
-                <p>永远惦记你的人</p>
-            </div>
-        </div>
+  <!-- 新增：属性调节面板 + 商店面板 -->
+  <div id="config-panel">
+    <!-- 植物属性配置 -->
+    <div class="config-section">
+      <h3>植物通用属性</h3>
+      <div class="config-item">
+        <label>基础伤害：</label>
+        <input type="number" id="plant-damage" value="2" min="1" max="500">
+        <button onclick="updatePlantConfig('damage')">应用</button>
+      </div>
+      <div class="config-item">
+        <label>射速(发/秒)：</label>
+        <input type="number" id="plant-fire-rate" value="2" min="0.1" max="20" step="0.1">
+        <button onclick="updatePlantConfig('fireRate')">应用</button>
+      </div>
+      <div class="config-item">
+        <label>血量：</label>
+        <input type="number" id="plant-hp" value="5" min="1" max="9999">
+        <button onclick="updatePlantConfig('hp')">应用</button>
+      </div>
     </div>
 
-    <!-- 我爱你字样 -->
-    <div class="love-message" id="love-message">我爱你</div>
+    <!-- 僵尸属性配置 -->
+    <div class="config-section">
+      <h3>僵尸通用属性</h3>
+      <div class="config-item">
+        <label>基础血量：</label>
+        <input type="number" id="zombie-hp" value="13" min="1" max="9999">
+        <button onclick="updateZombieConfig('hp')">应用</button>
+      </div>
+      <div class="config-item">
+        <label>攻击伤害：</label>
+        <input type="number" id="zombie-damage" value="1" min="1" max="9999">
+        <button onclick="updateZombieConfig('damage')">应用</button>
+      </div>
+      <div class="config-item">
+        <label>移动速度：</label>
+        <input type="number" id="zombie-speed" value="0.85" min="0.1" max="5" step="0.05">
+        <button onclick="updateZombieConfig('speed')">应用</button>
+      </div>
+    </div>
 
-    <script>
-    // 阻止所有文本选择行为
-    document.onselectstart = function() { return false; };
+    <!-- 特殊配置 -->
+    <div class="config-section">
+      <h3>特殊配置</h3>
+      <div class="config-item">
+        <button onclick="resetAllConfig()">重置所有属性</button>
+      </div>
+      <div class="config-item">
+        <button onclick="applyConfigToAllPlants()">应用到现有植物</button>
+      </div>
+    </div>
+
+    <!-- 新增：商店面板 -->
+    <div class="config-section" id="shop-panel">
+      <h3>植物商店</h3>
+      <div class="config-item">
+        <button id="shop-btn">打开商店</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增：商店弹窗 -->
+  <div id="shop-modal">
+    <div id="shop-content">
+      <h2>植物商店</h2>
+      <div id="diamond-count">钻石：<span id="diamond-num">100</span> 💎</div>
+      <div class="shop-plants">
+        <!-- 辣椒 -->
+        <div class="shop-plant-item" data-plant="chili">
+          <div class="icon">🌶️</div>
+          <div class="name">辣椒</div>
+          <div class="price">价格：50 💎</div>
+          <button class="buy-btn">购买</button>
+        </div>
+        <!-- 毁灭蘑菇 -->
+        <div class="shop-plant-item" data-plant="doomsday-mushroom">
+          <div class="icon">🍄</div>
+          <div class="name">毁灭蘑菇</div>
+          <div class="price">价格：80 💎</div>
+          <button class="buy-btn">购买</button>
+        </div>
+        <!-- 土豆墙 -->
+        <div class="shop-plant-item" data-plant="potato-wall">
+          <div class="icon">🥔</div>
+          <div class="name">土豆墙</div>
+          <div class="price">价格：30 💎</div>
+          <button class="buy-btn">购买</button>
+        </div>
+        <!-- 地刺 -->
+        <div class="shop-plant-item" data-plant="spike">
+          <div class="icon">🪨</div>
+          <div class="name">地刺</div>
+          <div class="price">价格：40 💎</div>
+          <button class="buy-btn">购买</button>
+        </div>
+        <!-- 火焰豌豆 -->
+        <div class="shop-plant-item" data-plant="fire-peashooter">
+          <div class="icon">🔥</div>
+          <div class="name">火焰豌豆</div>
+          <div class="price">价格：60 💎</div>
+          <button class="buy-btn">购买</button>
+        </div>
+      </div>
+      <button id="close-shop-btn">关闭商店</button>
+    </div>
+  </div>
+
+  <button id="pause-btn">暂停</button>
+  <div id="hud">
+    <span>阳光: <span id="sun-count">150</span></span>
+    <div id="plant-bar"></div>
+    <!-- 新增：倒计时显示 -->
+    <span class="time-count">剩余时间: <span id="time-left">03:00</span></span>
+    <span class="diamond-count">钻石: <span id="hud-diamond-count">100</span> 💎</span>
+    <span class="zombie-count">僵尸数量: <span id="zombie-count">0</span></span>
+  </div>
+  <div id="game-area">
+    <div id="lawn"></div>
+  </div>
+
+  <!-- 添加游戏结束弹窗 -->
+  <div id="game-over-modal">
+    <div id="game-over-content">
+      <h2>游戏结束</h2>
+      <p>僵尸吃掉了你的脑子！</p>
+      <button id="restart-btn">再来一局</button>
+    </div>
+  </div>
+
+  <!-- 新增：BOSS提示文字 -->
+  <div id="boss-warning">大BOSS降临！</div>
+
+  <!-- 新增：过关弹窗 -->
+  <div id="success-modal">
+    <div id="success-content">
+      <h2>恭喜过关！</h2>
+      <p>你击败了终极BOSS，获得100颗钻石奖励！</p>
+      <button id="success-restart-btn">再来一局</button>
+    </div>
+  </div>
+
+  <script>
+    // 基础配置参数
+    const BASE_CONFIG = {
+      plant: {
+        damage: 2,       // 植物基础伤害
+        fireRate: 2,     // 射速（发/秒）
+        hp: 5            // 植物血量
+      },
+      zombie: {
+        hp: 13,          // 僵尸基础血量
+        damage: 1,       // 僵尸攻击伤害
+        speed: 0.85      // 僵尸移动速度
+      }
+    };
+
+    // 当前配置（可动态修改）
+    let currentConfig = JSON.parse(JSON.stringify(BASE_CONFIG));
+
+    // 基础植物类型
+    const BASE_PLANT_TYPES = [
+      { key:'peashooter', name:'豌豆', cost:100, icon:'🌱', cd: Math.floor(100 / currentConfig.plant.fireRate), damage: currentConfig.plant.damage, freeze:0 },
+      { key:'watermelon', name:'西瓜', cost:300, icon:'🍉', cd: Math.floor(100 / currentConfig.plant.fireRate), damage: currentConfig.plant.damage * 2.5, freeze:0 },
+      { key:'chomper', name:'食人花', cost:150, icon:'🦷', cd: Math.floor(100 / currentConfig.plant.fireRate), damage: 999, freeze:0 },
+      { key:'icepeashooter', name:'寒冰豌豆', cost:175, icon:'❄️', cd: Math.floor(100 / currentConfig.plant.fireRate), damage: currentConfig.plant.damage, freeze:60 },
+      { key:'kernelpult', name:'玉米投手', cost:125, icon:'🌽', cd: Math.floor(100 / currentConfig.plant.fireRate), damage: currentConfig.plant.damage, freeze:0 },
+      // 新增向日葵配置
+      { key:'sunflower', name:'向日葵', cost:50, icon:'🌻', cd:30, sunRate:2000 } // sunRate: 生成阳光的间隔（毫秒）
+    ];
+
+    // 商店植物配置（初始未解锁）
+    const SHOP_PLANT_TYPES = [
+      { key:'chili', name:'辣椒', cost:150, icon:'🌶️', cd: 100, damage: currentConfig.plant.damage * 10, freeze:0, price:50, unlocked:false },
+      { key:'doomsday-mushroom', name:'毁灭蘑菇', cost:200, icon:'🍄', cd: 150, damage: currentConfig.plant.damage * 20, freeze:0, price:80, unlocked:false },
+      { key:'potato-wall', name:'土豆墙', cost:50, icon:'🥔', cd: 50, damage:0, freeze:0, price:30, unlocked:false, hp: currentConfig.plant.hp * 10 },
+      { key:'spike', name:'地刺', cost:80, icon:'🪨', cd: 80, damage: currentConfig.plant.damage * 3, freeze:0, price:40, unlocked:false },
+      { key:'fire-peashooter', name:'火焰豌豆', cost:120, icon:'🔥', cd: Math.floor(100 / currentConfig.plant.fireRate), damage: currentConfig.plant.damage * 1.5, freeze:0, price:60, unlocked:false }
+    ];
+
+    // 合并植物类型（基础+商店）
+    let PLANT_TYPES = [...BASE_PLANT_TYPES];
     
-    // 获取爱心元素
-    const heartClip = document.getElementById('heart-clip');
-    
-    // 添加点击和触摸事件
-    function handleHeartClick() {
-        const envelope = document.getElementById('envelope');
-        
-        // 播放信封打开动画
-        envelope.classList.add('open');
-        
-        // 信封打开后消失
-        setTimeout(() => {
-            envelope.classList.add('hide');
-            
-            // 信纸慢慢出现
-            setTimeout(() => {
-                const letterPaper = document.getElementById('letter-paper');
-                letterPaper.classList.add('show');
-                
-                // 添加信纸点击事件
-                letterPaper.addEventListener('click', function() {
-                    const loveMsg = document.getElementById('love-message');
-                    loveMsg.classList.add('show');
-                    
-                    // 3秒后消失
-                    setTimeout(() => {
-                        loveMsg.classList.remove('show');
-                    }, 3000);
-                });
-            }, 100);
-        }, 600);
+    const ROWS = 8, COLS = 18; // 核心修改：增加行列数，让格子更密集
+    let grid = [];
+    let plants = [];
+    let zombies = [];
+    let bullets = [];
+    let sunCount = 150;
+    let sunDropCount = 0;
+    // 新增：钻石数量
+    let diamondCount = 100;
+
+    let draggedPlantType = null;
+    let selectedPlantType = null;
+    let plantCd = {};
+    let pause = false;
+    let gameOver = false;
+
+    let sunTimer = null;
+    let zombieTimer = null;
+    // 新增：向日葵阳光生成计时器
+    let sunflowerTimer = null;
+
+    // 新增：游戏计时相关
+    let gameTimer = null;
+    let totalSeconds = 180; // 3分钟 = 180秒
+    let bossSpawned = false; // BOSS是否已生成
+    let bossZombie = null; // BOSS僵尸实例
+
+    // 获取DOM元素
+    const pauseBtn = document.getElementById('pause-btn');
+    const gameOverModal = document.getElementById('game-over-modal');
+    const restartBtn = document.getElementById('restart-btn');
+    // 新增：商店相关DOM
+    const shopBtn = document.getElementById('shop-btn');
+    const shopModal = document.getElementById('shop-modal');
+    const closeShopBtn = document.getElementById('close-shop-btn');
+    const diamondNumEl = document.getElementById('diamond-num');
+    const hudDiamondCountEl = document.getElementById('hud-diamond-count');
+    // 新增：计时相关DOM
+    const timeLeftEl = document.getElementById('time-left');
+    const bossWarningEl = document.getElementById('boss-warning');
+    const successModal = document.getElementById('success-modal');
+    const successRestartBtn = document.getElementById('success-restart-btn');
+
+    // 初始化游戏
+    function initGame() {
+      // 清除所有现有元素
+      const lawn = document.getElementById('lawn');
+      lawn.innerHTML = '';
+      
+      // 重置游戏状态
+      grid = [];
+      plants = [];
+      zombies = [];
+      bullets = [];
+      sunCount = 150;
+      sunDropCount = 0;
+      diamondCount = 100; // 重置钻石
+      draggedPlantType = null;
+      selectedPlantType = null;
+      plantCd = {};
+      pause = false;
+      gameOver = false;
+      totalSeconds = 180; // 重置计时
+      bossSpawned = false;
+      bossZombie = null;
+      
+      // 重置商店植物解锁状态
+      SHOP_PLANT_TYPES.forEach(plant => plant.unlocked = false);
+      // 重置植物类型列表
+      PLANT_TYPES = [...BASE_PLANT_TYPES];
+      
+      // 更新UI
+      updateSun();
+      updateDiamond();
+      updateZombieCount();
+      renderPlantBar();
+      updateShopUI();
+      updateGameTimer(); // 初始化倒计时显示
+      
+      // 重新创建网格（核心修改：适配密集格子）
+      for (let r = 0; r < ROWS; r++) {
+        grid[r] = [];
+        for (let c = 0; c < COLS; c++) {
+          const cell = document.createElement('div');
+          cell.className = 'cell';
+          cell.style.left = `${c*80}px`; // 80px宽度的格子
+          cell.style.top = `${r*70}px`;  // 70px高度的格子
+          cell.dataset.row = r;
+          cell.dataset.col = c;
+
+          cell.ondragover = (e)=>{
+            if (pause || gameOver) return;
+            if (draggedPlantType && !cell.querySelector('.plant')) {
+              e.preventDefault();
+              cell.classList.add('hovered');
+            }
+          };
+          cell.ondragleave = () => cell.classList.remove('hovered');
+          cell.ondrop = (e)=>{
+            if (pause || gameOver) return;
+            e.preventDefault();
+            cell.classList.remove('hovered');
+            if (!draggedPlantType) return;
+            let pType = PLANT_TYPES.find(p=>p.key===draggedPlantType);
+            if (sunCount < pType.cost) return;
+            if (cell.querySelector('.plant')) return;
+            if (plantCd[draggedPlantType]>0) return;
+            sunCount -= pType.cost;
+            updateSun();
+            makePlantFlyIn(pType, cell, r, c);
+            // 特殊处理土豆墙血量
+            let plantHp = pType.key === 'potato-wall' ? pType.hp : currentConfig.plant.hp;
+            plants.push({
+              row:r, 
+              col:c, 
+              type:draggedPlantType, 
+              cd:0, 
+              el:null, 
+              hp: plantHp, // 使用配置的血量
+              isEating:false, 
+              ice:false
+            });
+            plantCd[draggedPlantType]=pType.cd;
+            renderPlantBar();
+            draggedPlantType = null;
+            selectedPlantType = null;
+          };
+
+          cell.onclick = ()=>{
+            if (pause || gameOver) return;
+            if (!selectedPlantType) return;
+            let pType = PLANT_TYPES.find(p=>p.key===selectedPlantType);
+            if (sunCount < pType.cost) return;
+            if (cell.querySelector('.plant')) return;
+            if (plantCd[selectedPlantType]>0) return;
+            sunCount -= pType.cost;
+            updateSun();
+            makePlantFlyIn(pType, cell, r, c);
+            // 特殊处理土豆墙血量
+            let plantHp = pType.key === 'potato-wall' ? pType.hp : currentConfig.plant.hp;
+            plants.push({
+              row:r, 
+              col:c, 
+              type:selectedPlantType, 
+              cd:0, 
+              el:null, 
+              hp: plantHp, // 使用配置的血量
+              isEating:false, 
+              ice:false
+            });
+            plantCd[selectedPlantType]=pType.cd;
+            renderPlantBar();
+            selectedPlantType = null;
+          };
+
+          lawn.appendChild(cell);
+          grid[r][c] = cell;
+        }
+      }
+      
+      // 重新开始计时器
+      scheduleIntervals();
+      // 启动向日葵阳光生成计时器
+      startSunflowerTimer();
+      // 启动游戏倒计时
+      startGameTimer();
+      
+      // 隐藏游戏结束弹窗、过关弹窗和商店弹窗
+      gameOverModal.style.display = 'none';
+      successModal.style.display = 'none';
+      shopModal.style.display = 'none';
+      bossWarningEl.style.display = 'none';
+      
+      // 重新开始游戏循环
+      gameLoop();
     }
-    
-    // 添加点击事件
-    heartClip.addEventListener('click', handleHeartClick);
-    // 添加触摸事件
-    heartClip.addEventListener('touchend', handleHeartClick);
-</script>
 
+    // 新增：更新钻石显示
+    function updateDiamond() {
+      diamondNumEl.innerText = diamondCount;
+      hudDiamondCountEl.innerText = diamondCount;
+    }
+
+    // 新增：更新商店UI
+    function updateShopUI() {
+      const shopItems = document.querySelectorAll('.shop-plant-item');
+      shopItems.forEach(item => {
+        const plantKey = item.dataset.plant;
+        const plant = SHOP_PLANT_TYPES.find(p => p.key === plantKey);
+        const buyBtn = item.querySelector('.buy-btn');
+        
+        if (plant.unlocked) {
+          buyBtn.remove();
+          item.innerHTML += '<div class="bought">已购买</div>';
+        } else {
+          buyBtn.onclick = () => buyPlant(plantKey);
+        }
+      });
+    }
+
+    // 新增：购买植物
+    function buyPlant(plantKey) {
+      if (gameOver) return;
+      
+      const plant = SHOP_PLANT_TYPES.find(p => p.key === plantKey);
+      if (!plant) return;
+      
+      if (plant.unlocked) {
+        alert('该植物已解锁！');
+        return;
+      }
+      
+      if (diamondCount < plant.price) {
+        alert('钻石不足，无法购买！');
+        return;
+      }
+      
+      // 扣除钻石
+      diamondCount -= plant.price;
+      updateDiamond();
+      
+      // 解锁植物
+      plant.unlocked = true;
+      // 添加到植物列表
+      PLANT_TYPES.push({
+        key: plant.key,
+        name: plant.name,
+        cost: plant.cost,
+        icon: plant.icon,
+        cd: plant.cd,
+        damage: plant.damage,
+        freeze: plant.freeze,
+        hp: plant.hp || currentConfig.plant.hp
+      });
+      
+      // 更新商店UI和植物栏
+      updateShopUI();
+      renderPlantBar();
+      
+      alert(`成功购买${plant.name}！`);
+    }
+
+    // 新增：更新植物配置
+    function updatePlantConfig(type) {
+      const damageInput = document.getElementById('plant-damage');
+      const fireRateInput = document.getElementById('plant-fire-rate');
+      const hpInput = document.getElementById('plant-hp');
+
+      // 数值校验
+      let value;
+      switch(type) {
+        case 'damage':
+          value = Math.min(500, Math.max(1, parseInt(damageInput.value) || 2));
+          damageInput.value = value;
+          currentConfig.plant.damage = value;
+          // 更新植物类型的伤害值
+          PLANT_TYPES.forEach(p => {
+            if (p.key === 'watermelon') p.damage = value * 2.5;
+            else if (p.key === 'chili') p.damage = value * 10;
+            else if (p.key === 'doomsday-mushroom') p.damage = value * 20;
+            else if (p.key === 'spike') p.damage = value * 3;
+            else if (p.key === 'fire-peashooter') p.damage = value * 1.5;
+            else if (p.key !== 'chomper' && p.key !== 'potato-wall') p.damage = value;
+          });
+          // 更新商店植物配置
+          SHOP_PLANT_TYPES.forEach(p => {
+            if (p.key === 'chili') p.damage = value * 10;
+            else if (p.key === 'doomsday-mushroom') p.damage = value * 20;
+            else if (p.key === 'spike') p.damage = value * 3;
+            else if (p.key === 'fire-peashooter') p.damage = value * 1.5;
+          });
+          break;
+        case 'fireRate':
+          value = Math.min(20, Math.max(0.1, parseFloat(fireRateInput.value) || 2));
+          fireRateInput.value = value;
+          currentConfig.plant.fireRate = value;
+          // 更新冷却时间（1秒=100帧，所以cd=100/射速）
+          const cdValue = Math.floor(100 / value);
+          PLANT_TYPES.forEach(p => {
+            if (p.key !== 'sunflower' && p.key !== 'chili' && p.key !== 'doomsday-mushroom' && p.key !== 'potato-wall' && p.key !== 'spike') {
+              p.cd = cdValue;
+            }
+          });
+          // 更新商店植物配置
+          SHOP_PLANT_TYPES.forEach(p => {
+            if (p.key === 'fire-peashooter') p.cd = cdValue;
+          });
+          break;
+        case 'hp':
+          value = Math.min(9999, Math.max(1, parseInt(hpInput.value) || 5));
+          hpInput.value = value;
+          currentConfig.plant.hp = value;
+          // 更新土豆墙血量
+          PLANT_TYPES.forEach(p => {
+            if (p.key === 'potato-wall') p.hp = value * 10;
+          });
+          SHOP_PLANT_TYPES.forEach(p => {
+            if (p.key === 'potato-wall') p.hp = value * 10;
+          });
+          break;
+      }
+      
+      alert(`植物${type === 'damage' ? '伤害' : type === 'fireRate' ? '射速' : '血量'}已更新为: ${value}`);
+    }
+
+    // 新增：更新僵尸配置
+    function updateZombieConfig(type) {
+      const hpInput = document.getElementById('zombie-hp');
+      const damageInput = document.getElementById('zombie-damage');
+      const speedInput = document.getElementById('zombie-speed');
+
+      // 数值校验
+      let value;
+      switch(type) {
+        case 'hp':
+          value = Math.min(9999, Math.max(1, parseInt(hpInput.value) || 13));
+          hpInput.value = value;
+          currentConfig.zombie.hp = value;
+          break;
+        case 'damage':
+          value = Math.min(9999, Math.max(1, parseInt(damageInput.value) || 1));
+          damageInput.value = value;
+          currentConfig.zombie.damage = value;
+          break;
+        case 'speed':
+          value = Math.min(5, Math.max(0.1, parseFloat(speedInput.value) || 0.85));
+          speedInput.value = value;
+          currentConfig.zombie.speed = value;
+          break;
+      }
+      
+      alert(`僵尸${type === 'hp' ? '血量' : type === 'damage' ? '伤害' : '速度'}已更新为: ${value}`);
+    }
+
+    // 新增：重置所有配置
+    function resetAllConfig() {
+      currentConfig = JSON.parse(JSON.stringify(BASE_CONFIG));
+      
+      // 重置输入框
+      document.getElementById('plant-damage').value = BASE_CONFIG.plant.damage;
+      document.getElementById('plant-fire-rate').value = BASE_CONFIG.plant.fireRate;
+      document.getElementById('plant-hp').value = BASE_CONFIG.plant.hp;
+      document.getElementById('zombie-hp').value = BASE_CONFIG.zombie.hp;
+      document.getElementById('zombie-damage').value = BASE_CONFIG.zombie.damage;
+      document.getElementById('zombie-speed').value = BASE_CONFIG.zombie.speed;
+      
+      // 重置植物类型配置
+      PLANT_TYPES.forEach(p => {
+        if (p.key === 'peashooter' || p.key === 'icepeashooter' || p.key === 'kernelpult') {
+          p.damage = BASE_CONFIG.plant.damage;
+          p.cd = Math.floor(100 / BASE_CONFIG.plant.fireRate);
+        } else if (p.key === 'watermelon') {
+          p.damage = BASE_CONFIG.plant.damage * 2.5;
+          p.cd = Math.floor(100 / BASE_CONFIG.plant.fireRate);
+        } else if (p.key === 'chomper') {
+          p.damage = 999;
+          p.cd = Math.floor(100 / BASE_CONFIG.plant.fireRate);
+        } else if (p.key === 'chili') {
+          p.damage = BASE_CONFIG.plant.damage * 10;
+        } else if (p.key === 'doomsday-mushroom') {
+          p.damage = BASE_CONFIG.plant.damage * 20;
+        } else if (p.key === 'spike') {
+          p.damage = BASE_CONFIG.plant.damage * 3;
+        } else if (p.key === 'fire-peashooter') {
+          p.damage = BASE_CONFIG.plant.damage * 1.5;
+          p.cd = Math.floor(100 / BASE_CONFIG.plant.fireRate);
+        } else if (p.key === 'potato-wall') {
+          p.hp = BASE_CONFIG.plant.hp * 10;
+        }
+      });
+      
+      // 重置商店植物配置
+      SHOP_PLANT_TYPES.forEach(p => {
+        if (p.key === 'chili') p.damage = BASE_CONFIG.plant.damage * 10;
+        else if (p.key === 'doomsday-mushroom') p.damage = BASE_CONFIG.plant.damage * 20;
+        else if (p.key === 'potato-wall') p.hp = BASE_CONFIG.plant.hp * 10;
+        else if (p.key === 'spike') p.damage = BASE_CONFIG.plant.damage * 3;
+        else if (p.key === 'fire-peashooter') {
+          p.damage = BASE_CONFIG.plant.damage * 1.5;
+          p.cd = Math.floor(100 / BASE_CONFIG.plant.fireRate);
+        }
+      });
+      
+      alert('所有配置已重置为默认值');
+    }
+
+    // 新增：启动向日葵阳光生成计时器
+    function startSunflowerTimer() {
+      if (sunflowerTimer) clearInterval(sunflowerTimer);
+      sunflowerTimer = setInterval(() => {
+        if (pause || gameOver) return;
+        // 遍历所有向日葵植物
+        plants.forEach(plant => {
+          if (plant.type === 'sunflower' && !gameOver && !pause) {
+            // 生成阳光
+            sunCount += 25;
+            updateSun();
+            // 在向日葵位置生成阳光视觉效果
+            const cell = grid[plant.row][plant.col];
+            const sun = document.createElement("div");
+            sun.className = "sun";
+            cell.appendChild(sun);
+            sun.onclick = () => {
+              if(!gameOver) {
+                sun.remove();
+              }
+            };
+            // 5秒后自动消失
+            setTimeout(()=>{
+              if(sun.parentNode) sun.remove();
+            }, 5000);
+          }
+        });
+      }, 2000); // 每2秒执行一次
+    }
+
+    // 游戏结束函数
+    function endGame() {
+      gameOver = true;
+      pause = true;
+      clearInterval(sunTimer);
+      clearInterval(zombieTimer);
+      clearInterval(sunflowerTimer); // 清除向日葵计时器
+      clearInterval(gameTimer); // 清除游戏计时
+      gameOverModal.style.display = 'flex';
+    }
+
+    // 新增：过关函数
+    function gameSuccess() {
+      gameOver = true;
+      pause = true;
+      clearInterval(sunTimer);
+      clearInterval(zombieTimer);
+      clearInterval(sunflowerTimer);
+      clearInterval(gameTimer);
+      
+      // 清除所有植物和僵尸
+      plants.forEach(plant => {
+        if (plant.el) plant.el.remove();
+      });
+      zombies.forEach(zombie => {
+        if (zombie.el) zombie.el.remove();
+      });
+      bullets.forEach(bullet => {
+        if (bullet.el) bullet.el.remove();
+      });
+      plants = [];
+      zombies = [];
+      bullets = [];
+      
+      // 奖励100钻石
+      diamondCount += 100;
+      updateDiamond();
+      
+      // 显示过关弹窗
+      successModal.style.display = 'flex';
+    }
+
+    // 再来一局按钮事件
+    restartBtn.onclick = initGame;
+    successRestartBtn.onclick = initGame;
+
+    // 新增：商店按钮事件
+    shopBtn.onclick = () => {
+      if (!gameOver) {
+        shopModal.style.display = 'flex';
+        updateShopUI();
+      }
+    };
+    closeShopBtn.onclick = () => {
+      shopModal.style.display = 'none';
+    };
+
+    // ---------暂停按钮实现---------
+    pauseBtn.onclick = function(){
+      if(gameOver) return;
+      pause = !pause;
+      pauseBtn.innerText = pause ? "继续" : "暂停";
+      if (!pause) { // 恢复时，继续游戏回调和interval
+        gameLoop();
+      }
+    };
+
+    // 新增：更新游戏倒计时显示
+    function updateGameTimer() {
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      timeLeftEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    // 新增：启动游戏倒计时
+    function startGameTimer() {
+      if (gameTimer) clearInterval(gameTimer);
+      gameTimer = setInterval(() => {
+        if (pause || gameOver) return;
+        
+        totalSeconds--;
+        updateGameTimer();
+        
+        // 剩余60秒时触发BOSS提示
+        if (totalSeconds === 60 && !bossSpawned) {
+          showBossWarning();
+        }
+        
+        // 时间到且未击败BOSS则游戏结束
+        if (totalSeconds <= 0) {
+          endGame();
+        }
+      }, 1000);
+    }
+
+    // 新增：显示BOSS提示并生成BOSS僵尸
+    function showBossWarning() {
+      // 显示红色闪烁提示
+      bossWarningEl.style.display = 'block';
+      
+      // 3秒后隐藏提示并生成BOSS
+      setTimeout(() => {
+        bossWarningEl.style.display = 'none';
+        spawnBossZombie();
+        bossSpawned = true;
+      }, 3000);
+    }
+
+    // 新增：生成BOSS僵尸
+    function spawnBossZombie() {
+      const row = Math.floor(Math.random() * ROWS); // 随机行
+      const zombieEl = document.createElement('div');
+      zombieEl.className = 'zombie boss';
+      zombieEl.style.top = `${row * 70 + (70 - 120)/2}px`; // 居中显示
+      zombieEl.style.left = '1450px';
+      
+      // BOSS血条
+      const hpEl = document.createElement('div');
+      hpEl.className = 'zombie-hp';
+      hpEl.textContent = '500';
+      zombieEl.appendChild(hpEl);
+      zombieEl.appendChild(document.createTextNode('👑')); // BOSS图标
+      
+      document.getElementById('game-area').appendChild(zombieEl);
+      
+      // 添加BOSS僵尸到数组
+      bossZombie = {
+        row: row,
+        col: COLS - 1,
+        hp: 500,
+        maxHp: 500,
+        el: zombieEl,
+        speed: 0.1, // 非常缓慢的移动速度
+        damage: currentConfig.zombie.damage,
+        isFrozen: false,
+        isBurning: false,
+        freezeTimer: 0,
+        burnTimer: 0,
+        isBoss: true
+      };
+      zombies.push(bossZombie);
+      updateZombieCount();
+    }
+
+    function renderPlantBar() {
+      const bar = document.getElementById('plant-bar');
+      bar.innerHTML = '';
+      PLANT_TYPES.forEach((p, idx) => {
+        const btn = document.createElement('div');
+        btn.className = 'plant-btn';
+        btn.draggable = true;
+        btn.dataset.plant = p.key;
+        if (selectedPlantType === p.key) btn.classList.add("selected");
+        btn.ondragstart = (e)=>{
+          if (pause || gameOver) return e.preventDefault();
+          draggedPlantType = p.key;
+          e.dataTransfer.setDragImage(makeDragImg(p), 35, 40);
+          btn.classList.add('selected');
+        };
+        btn.ondragend = () => { draggedPlantType = null; btn.classList.remove('selected'); };
+        btn.onclick = () => {
+          if (pause || gameOver) return;
+          selectedPlantType = selectedPlantType !== p.key ? p.key : null;
+          renderPlantBar();
+        };
+        btn.innerHTML = `<div class="icon">${p.icon}</div>${p.name}<br><span style="font-size:15px;">${p.cost}☀️</span>`;
+        bar.appendChild(btn);
+      });
+    }
+
+    function makeDragImg(p){
+      let dragImg = document.createElement("div");
+      dragImg.className = "drag-image";
+      dragImg.innerHTML = `<span style="font-size:36px;">${p.icon}</span><br><span style="font-size:14px;">${p.name}</span>`;
+      document.body.appendChild(dragImg);
+      setTimeout(()=>dragImg.remove(),100);
+      return dragImg;
+    }
+
+    function makePlantFlyIn(pType, cell, r, c) {
+      let plant = document.createElement('div');
+      plant.className = `plant ${pType.key} plant-fly-in`;
+      plant.innerHTML = pType.icon;
+      cell.appendChild(plant);
+      // 找到对应植物对象并保存DOM引用
+      let plantObj = plants.find(p=>p.row===r && p.col===c && p.type===pType.key);
+      if(plantObj) plantObj.el = plant;
+      return plant;
+    }
+
+    function updateSun() {
+      document.getElementById('sun-count').innerText = sunCount;
+    }
+
+    function updateZombieCount() {
+      document.getElementById('zombie-count').innerText = zombies.length;
+    }
+
+    function scheduleIntervals() {
+      // 阳光掉落计时器
+      if (sunTimer) clearInterval(sunTimer);
+      sunTimer = setInterval(()=>{
+        if(pause || gameOver) return;
+        sunDropCount++;
+        if(sunDropCount % 120 === 0) { // 每120帧掉落阳光
+          let r = Math.floor(Math.random() * ROWS);
+          let c = Math.floor(Math.random() * COLS);
+          let cell = grid[r][c];
+          if(cell && !cell.querySelector('.plant')) {
+            let sun = document.createElement('div');
+            sun.className = 'sun';
+            sun.onclick = ()=>{
+              if(!gameOver) {
+                sunCount += 25;
+                updateSun();
+                sun.remove();
+              }
+            };
+            cell.appendChild(sun);
+            setTimeout(()=>{
+              if(sun.parentNode) sun.remove();
+            }, 8000);
+          }
+        }
+      }, 50);
+
+      // 僵尸生成计时器
+      if (zombieTimer) clearInterval(zombieTimer);
+      zombieTimer = setInterval(()=>{
+        if(pause || gameOver || bossSpawned) return; // BOSS生成后停止普通僵尸生成
+        
+        let r = Math.floor(Math.random() * ROWS);
+        let zombieEl = document.createElement('div');
+        zombieEl.className = 'zombie';
+        zombieEl.style.top = `${r*70}px`;
+        zombieEl.style.left = '1450px';
+        
+        let hpEl = document.createElement('div');
+        hpEl.className = 'zombie-hp';
+        hpEl.textContent = currentConfig.zombie.hp;
+        zombieEl.appendChild(hpEl);
+        zombieEl.appendChild(document.createTextNode('🧟'));
+        
+        document.getElementById('game-area').appendChild(zombieEl);
+        
+        zombies.push({
+          row: r,
+          col: COLS-1,
+          hp: currentConfig.zombie.hp,
+          maxHp: currentConfig.zombie.hp,
+          el: zombieEl,
+          speed: currentConfig.zombie.speed,
+          damage: currentConfig.zombie.damage,
+          isFrozen: false,
+          isBurning: false,
+          freezeTimer: 0,
+          burnTimer: 0,
+          isBoss: false
+        });
+        updateZombieCount();
+      }, 3000 + Math.random() * 5000);
+    }
+
+    function gameLoop() {
+      if(pause || gameOver) return;
+      
+      // 更新植物冷却
+      Object.keys(plantCd).forEach(key=>{
+        if(plantCd[key]>0) plantCd[key]--;
+      });
+      renderPlantBar();
+
+      // 更新植物
+      plants.forEach(plant=>{
+        if(plant.cd>0) plant.cd--;
+        if(plant.hp <=0) {
+          if(plant.el) plant.el.remove();
+          plants = plants.filter(p=>p!==plant);
+          return;
+        }
+
+        // 向日葵不攻击，跳过
+        if (plant.type === 'sunflower' || plant.type === 'potato-wall' || plant.type === 'spike') return;
+
+        // 攻击逻辑
+        if(plant.cd<=0) {
+          let hasZombie = false;
+          for(let c=plant.col+1; c<COLS; c++) {
+            for(let z of zombies) {
+              if(z.row === plant.row && z.col === c) {
+                hasZombie = true;
+                break;
+              }
+            }
+            if(hasZombie) break;
+          }
+
+          if(hasZombie) {
+            let pType = PLANT_TYPES.find(p=>p.key===plant.type);
+            plant.cd = pType.cd;
+            
+            // 创建子弹
+            let bullet = document.createElement('div');
+            bullet.className = `bullet ${plant.type}`;
+            if(Math.random()<0.05) bullet.classList.add('special');
+            bullet.style.top = `${plant.row*70 + 35}px`;
+            bullet.style.left = `${plant.col*80 + 40}px`;
+            document.getElementById('game-area').appendChild(bullet);
+            
+            bullets.push({
+              row: plant.row,
+              col: plant.col,
+              el: bullet,
+              type: plant.type,
+              damage: pType.damage,
+              freeze: pType.freeze,
+              isSpecial: bullet.classList.contains('special')
+            });
+          }
+        }
+      });
+
+      // 更新子弹
+      bullets.forEach(bullet=>{
+        let speed = bullet.isSpecial ? 15 : 10;
+        bullet.el.style.left = `${parseInt(bullet.el.style.left) + speed}px`;
+        let bulletCol = Math.floor(parseInt(bullet.el.style.left)/80);
+
+        // 子弹超出范围
+        if(parseInt(bullet.el.style.left) > 1500) {
+          bullet.el.remove();
+          bullets = bullets.filter(b=>b!==bullet);
+          return;
+        }
+
+        // 检测碰撞
+        zombies.forEach(zombie=>{
+          if(zombie.row === bullet.row && 
+             Math.abs(parseInt(bullet.el.style.left) - (zombie.col*80 + 32)) < 40 &&
+             zombie.hp > 0) {
+            
+            // 扣血
+            zombie.hp -= bullet.damage;
+            zombie.el.querySelector('.zombie-hp').textContent = Math.max(0, zombie.hp);
+            zombie.el.querySelector('.zombie-hp').classList.add('animating');
+            setTimeout(()=>{
+              zombie.el.querySelector('.zombie-hp').classList.remove('animating');
+            }, 550);
+
+            // 冰冻效果
+            if(bullet.freeze>0) {
+              zombie.isFrozen = true;
+              zombie.freezeTimer = bullet.freeze;
+              zombie.el.classList.add('frozen');
+            }
+
+            // 火焰效果（火焰豌豆专属）
+            if (bullet.type === 'fire-peashooter') {
+              zombie.isBurning = true;
+              zombie.burnTimer = 100;
+              zombie.el.classList.add('burning');
+            }
+
+            // 移除子弹
+            bullet.el.remove();
+            bullets = bullets.filter(b=>b!==bullet);
+
+            // 僵尸死亡
+            if(zombie.hp <=0) {
+              zombie.el.remove();
+              zombies = zombies.filter(z=>z!==zombie);
+              updateZombieCount();
+              
+              // 检查是否是BOSS且已击败
+              if (zombie.isBoss) {
+                gameSuccess();
+              }
+            }
+            return;
+          }
+        });
+      });
+
+      // 更新僵尸
+      zombies.forEach(zombie=>{
+        // 冰冻效果
+        if(zombie.isFrozen) {
+          zombie.freezeTimer--;
+          if(zombie.freezeTimer <=0) {
+            zombie.isFrozen = false;
+            zombie.el.classList.remove('frozen');
+          }
+        }
+
+        // 燃烧效果
+        if(zombie.isBurning) {
+          zombie.burnTimer--;
+          zombie.hp -= 0.5; // 持续掉血
+          zombie.el.querySelector('.zombie-hp').textContent = Math.max(0, zombie.hp);
+          if(zombie.burnTimer <=0) {
+            zombie.isBurning = false;
+            zombie.el.classList.remove('burning');
+          }
+          if(zombie.hp <=0) {
+            zombie.el.remove();
+            zombies = zombies.filter(z=>z!==zombie);
+            updateZombieCount();
+            if (zombie.isBoss) {
+              gameSuccess();
+            }
+            return;
+          }
+        }
+
+        // 移动逻辑
+        if(!zombie.isFrozen) {
+          let speed = zombie.isBoss ? zombie.speed : zombie.speed;
+          zombie.el.style.left = `${parseInt(zombie.el.style.left) - speed}px`;
+          zombie.col = Math.floor((1500 - parseInt(zombie.el.style.left))/80);
+        }
+
+        // 到达最左侧，游戏结束
+        if(parseInt(zombie.el.style.left) <= 0) {
+          endGame();
+          return;
+        }
+
+        // 攻击植物
+        let plantInCell = plants.find(p=>p.row===zombie.row && p.col===zombie.col);
+        if(plantInCell) {
+          zombie.isEating = true;
+          if(zombie.cd <=0) {
+            plantInCell.hp -= zombie.damage;
+            if(plantInCell.hp >0) {
+              plantInCell.el.style.filter = `brightness(${0.2 + plantInCell.hp/currentConfig.plant.hp * 0.8})`;
+            } else {
+              plantInCell.el.remove();
+              plants = plants.filter(p=>p!==plantInCell);
+            }
+            zombie.cd = 50;
+          } else {
+            zombie.cd--;
+          }
+        } else {
+          zombie.isEating = false;
+        }
+      });
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    // 初始化游戏
+    initGame();
+  </script>
 </body>
 </html>
