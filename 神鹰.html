@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>温馨小角落</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", 微软雅黑, sans-serif;
+            background-color: #fdf6e9; /* 暖米色背景 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            color: #5a4b38; /* 暖棕色文字 */
+            transition: all 0.5s ease; /* 背景/文字颜色过渡 */
+        }
+
+        /* 红黑风格的body样式（点击按钮后添加） */
+        body.red-black {
+            background-color: #1a0000; /* 红黑色系背景 */
+            color: #ff3333; /* 红色文字 */
+        }
+
+        .warm-card {
+            background-color: #fff;
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(222, 184, 135, 0.15); /* 柔和阴影 */
+            text-align: center;
+            max-width: 450px;
+            transition: all 0.5s ease; /* 卡片样式过渡 */
+        }
+
+        /* 红黑风格的卡片样式 */
+        body.red-black .warm-card {
+            background-color: #000; /* 黑色卡片背景 */
+            box-shadow: 0 8px 24px rgba(255, 51, 51, 0.2); /* 红色阴影 */
+        }
+
+        .warm-card h1 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: #d29f7c; /* 暖橘色标题 */
+            transition: color 0.5s ease;
+        }
+
+        body.red-black .warm-card h1 {
+            color: #ff0000; /* 红色标题 */
+        }
+
+        .warm-card p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            transition: color 0.5s ease;
+        }
+
+        body.red-black .warm-card p {
+            color: #ff6666; /* 浅红色正文 */
+        }
+
+        /* 温馨小按钮样式 */
+        .tiny-btn {
+            background-color: #f8c898; /* 暖橙底色 */
+            border: none;
+            border-radius: 20px; /* 圆角按钮 */
+            padding: 10px 20px;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(248, 200, 152, 0.3);
+        }
+
+        body.red-black .tiny-btn {
+            background-color: #cc0000; /* 红色按钮 */
+            box-shadow: 0 4px 8px rgba(255, 0, 0, 0.4);
+        }
+
+        .tiny-btn:hover {
+            background-color: #f5b878; /* hover加深颜色 */
+            transform: translateY(-2px); /* 轻微上浮 */
+            box-shadow: 0 6px 12px rgba(248, 200, 152, 0.4);
+        }
+
+        body.red-black .tiny-btn:hover {
+            background-color: #ff0000; /* 红色hover */
+            box-shadow: 0 6px 12px rgba(255, 0, 0, 0.5);
+        }
+
+        .tiny-btn:active {
+            transform: translateY(0); /* 点击回弹 */
+        }
+
+        /* 底部小装饰 */
+        .decor {
+            margin-top: 40px;
+            font-size: 12px;
+            opacity: 0.7;
+            transition: color 0.5s ease;
+        }
+
+        body.red-black .decor {
+            color: #ff4444; /* 红色装饰文字 */
+        }
+
+        /* 视频容器样式 - 完全隐藏（仅保留音频播放） */
+        .video-container {
+            display: none !important; /* 强制隐藏视频容器 */
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+        }
+
+        video {
+            width: 0;
+            height: 0;
+            visibility: hidden; /* 彻底隐藏视频画面 */
+        }
+
+        /* 新增：元素隐藏样式 */
+        .hide-all .warm-card,
+        .hide-all .decor {
+            display: none; /* 隐藏卡片和底部装饰 */
+        }
+
+        /* 新增：图片容器样式 */
+        .image-container {
+            display: none; /* 默认隐藏 */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999; /* 确保图片在最上层 */
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 12px;
+            box-shadow: 0 0 30px rgba(255, 51, 51, 0.6);
+            transition: all 0.5s ease;
+        }
+
+        /* 显示图片的样式 */
+        .show-image .image-container {
+            display: block;
+            animation: fadeIn 0.8s ease;
+        }
+
+        /* 图片淡入动画 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        /* 红黑风格下的图片边框效果 */
+        body.red-black .image-container img {
+            border: 3px solid #ff3333;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="warm-card">
+        <h1>祝你新年快乐 ✨</h1>
+        <p>已经2026年啦，新的一年新的我们，我祝你新的一年里万事如意，接下来是我想对你说的话</p>
+        <button class="tiny-btn" onclick="playAudioAndChangeStyle()">查看</button>
+    </div>
+    
+    <!-- 新增：图片容器 -->
+    <div class="image-container">
+        <!-- 请替换为你的图片路径，支持jpg/png/gif等格式 -->
+        <img src="少羽牛逼.jpg"  style="max-width: 100%; max-height: 100%;">
+    </div>
+    
+    <!-- 视频容器（仅播放音频，画面完全隐藏） -->
+    <div class="video-container" id="videoContainer">
+        <video id="videoPlayer" controls>
+            <!-- 替换为你的视频文件路径，支持mp4/ogg/webm等格式 -->
+            <source src="神鹰黑手哥.mp4" type="video/mp4">
+            你的浏览器不支持HTML5视频播放，请升级浏览器！
+        </video>
+    </div>
+    <div class="decor">✨ 愿美好与你环环相扣 ✨</div>
+
+    <script>
+        // 播放音频（隐藏视频画面）+ 切换红黑风格 + 隐藏所有可见元素 + 显示图片
+        function playAudioAndChangeStyle() {
+            // 1. 切换页面为红黑风格
+            document.body.classList.add('red-black');
+            // 2. 添加隐藏所有元素的类
+            document.body.classList.add('hide-all');
+            // 3. 添加显示图片的类
+            document.body.classList.add('show-image');
+            
+            // 4. 获取视频播放器（仅播放音频）
+            const videoPlayer = document.getElementById('videoPlayer');
+            
+            // 设置音量为最大
+            videoPlayer.volume = 1.0;
+            
+            // 尝试播放音频（视频画面已隐藏）
+            videoPlayer.play().then(() => {
+                console.log('音频开始播放，音量已调至最大，视频画面已隐藏，所有可见元素已隐藏，图片已显示');
+            }).catch(err => {
+                console.error('音频播放失败:', err);
+                alert('音频播放失败，请手动点击播放按钮！');
+            });
+        }
+    </script>
+</body>
+</html>
